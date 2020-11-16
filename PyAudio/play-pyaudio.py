@@ -10,13 +10,11 @@ CHUNK = 1024
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("play wavefile")
-    parser.add_argument('wavefile_name', type=str, nargs='?', help='use this file to play')
+    parser.add_argument('wavefile_name', default="examples/click.wav",
+                        type=str, nargs='?', help='use this file to play')
     args = parser.parse_args()
 
-    fn = "examples/click.wav"
-    if args.wavefile_name is not None:
-        fn = args.wavefile_name
-    wf = wave.open(fn, 'rb')
+    wf = wave.open(args.wavefile_name, 'rb')
 
     framerate = wf.getframerate()
     print(f"Framerate: {framerate}")

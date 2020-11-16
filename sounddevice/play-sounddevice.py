@@ -5,20 +5,16 @@ import numpy as np
 import sounddevice as sd
 import soundfile as sf
 
-CHUNK = 1024
-
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("play wavefile")
-    parser.add_argument('wavefile_name', type=str, nargs='?', help='use this file to play')
+    parser.add_argument('wavefile_name', default="examples/click.wav",
+                        type=str, nargs='?', help='use this file to play')
     args = parser.parse_args()
 
     try:
-        fn = "examples/click.wav"
-        if args.wavefile_name is not None:
-            fn = args.wavefile_name
-        data, fs = sf.read(fn, dtype=np.float32)
+        data, fs = sf.read(args.wavefile_name, dtype=np.float32)
 
         print(f"Framerate: {fs}")
 
