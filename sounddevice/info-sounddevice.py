@@ -1,6 +1,17 @@
 import sounddevice as sd
 import numpy as np
-from pprint import pprint
+
+
+def print_details(device) -> None:
+    hostapi_names = [hostapi['name'] for hostapi in sd.query_hostapis()]
+    ha = hostapi_names[device['hostapi']]
+    ins = device['max_input_channels']
+    outs = device['max_output_channels']
+    lat_in_hi = device["default_high_input_latency"]
+    lat_in_lo = device["default_low_input_latency"]
+    lat_out_hi = device["default_high_output_latency"]
+    lat_out_lo = device["default_low_output_latency"]
+    print(f"{device['name']}, {ha} ({ins} in, {outs} out), latency in({lat_in_lo:.3f}-{lat_in_hi:.3f}) out({lat_out_lo:.3f}-{lat_out_hi:.3f})")
 
 
 def print_all_devices() -> None:
@@ -12,18 +23,18 @@ def print_all_devices() -> None:
     devices = sd.query_devices()
     print(devices)
 
-    print("default output")
+    # default output
     spk_all = sd.query_devices(kind="output")
-    pprint(spk_all)
+    print_details(spk_all)
 
-    print("default input")
+    # default input
     mic_all = sd.query_devices(kind="input")
-    pprint(mic_all)
+    print_details(mic_all)
 
     while True:
-        choose = input()
+        choose = input("Interested in a particular device? Which one? ")
         choose = int(choose)
-        pprint(sd.query_devices(choose))
+        print_details(sd.query_devices(choose))
 
 
 if __name__ == "__main__":
