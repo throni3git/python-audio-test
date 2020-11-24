@@ -1,19 +1,12 @@
-import argparse
-import sys
-import time
-from pathlib import Path
-
 import numpy as np
 import sounddevice as sd
-import soundfile as sf
+
+import utils
 
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("play wavefile")
-    # parser.add_argument('wavefile_name', default="examples/click.wav",
-    #                     type=str, nargs='?', help='use this file to play')
-    args = parser.parse_args()
+    cli_args = utils.get_CLI_args()
 
     try:
 
@@ -48,7 +41,7 @@ if __name__ == "__main__":
                 snippet = indata[:out_length, :]
 
                 level = np.sqrt(np.mean(snippet ** 2))
-                if not np.isnan(level) :
+                if not np.isnan(level):
                     anzeige = '#' * int(level*80)
                     print(anzeige)
 
@@ -66,15 +59,10 @@ if __name__ == "__main__":
             timeout = blocksize / fs
             while pt_data < data.shape[0]:
                 sd.sleep(int(timeout*1000))
-        
-        fn_out_file = Path("tmp/rec-callback-sounddevice.wav")
-        if not fn_out_file.parent.exists():
-            fn_out_file.parent.mkdir()
-        sf.write(fn_out_file.absolute(), data, fs)
+
+        utils.write_soundfile("tmp/rec-callback-sounddevice.wav", data, fs)
 
     except KeyboardInterrupt:
-        parser.exit('\nInterrupted by user')
+        exit('\nInterrupted by user')
     except Exception as e:
-        parser.exit(type(e).__name__ + ': ' + str(e))
-    # if status:
-    #     parser.exit('Error during playback: ' + str(status))
+        exit(type(e).__name__ + ': ' + str(e))

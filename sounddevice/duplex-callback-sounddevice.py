@@ -1,23 +1,19 @@
-import argparse
 import sys
-import time
-from pathlib import Path
 
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
 
+import utils
+
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("play wavefile")
-    parser.add_argument('wavefile_name', default="examples/sweep_noise.wav",
-                        type=str, nargs='?', help='use this file to play')
-    args = parser.parse_args()
+    cli_args = utils.get_CLI_args()
 
     try:
 
-        sweep_data, fs = sf.read(args.wavefile_name, dtype=np.float32)
+        sweep_data, fs = sf.read(cli_args.wavefile_name, dtype=np.float32)
         sweep_data = np.atleast_2d(sweep_data).T
 
         print(f"Framerate: {fs}")
@@ -65,7 +61,8 @@ if __name__ == "__main__":
                 if pt_data+out_length < record_data.shape[0]:
                     record_data[pt_data:pt_data+out_length, :] = indata[:out_length, :]
 
-        blocksize = 32
+        # sd.default.device = "JACK"
+        blocksize = 128
         stream = sd.Stream(
             samplerate=fs,
             blocksize=blocksize,
@@ -79,14 +76,9 @@ if __name__ == "__main__":
             while pt_data < sweep_data.shape[0]:
                 sd.sleep(int(timeout*1000))
 
-        fn_out_file = Path("tmp/duplex-callback-sounddevice.wav")
-        if not fn_out_file.parent.exists():
-            fn_out_file.parent.mkdir()
-        sf.write(fn_out_file.absolute(), record_data, fs)
+        utils.write_soundfile("tmp/duplex-callback-sounddevice.wav", record_data, fs)
 
     except KeyboardInterrupt:
-        parser.exit('\nInterrupted by user')
+        exit('\nInterrupted by user')
     except Exception as e:
-        parser.exit(type(e).__name__ + ': ' + str(e))
-    # if status:
-    #     parser.exit('Error during playback: ' + str(status))
+        exit(type(e).__name__ + ': ' + str(e))

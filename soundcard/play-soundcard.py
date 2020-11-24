@@ -1,18 +1,15 @@
-import argparse
-
 import numpy as np
 import soundcard as sc
 import soundfile as sf
 
+import utils
+
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("play wavefile")
-    parser.add_argument('wavefile_name', default="examples/click.wav",
-                        type=str, nargs='?', help='use this file to play')
-    args = parser.parse_args()
+    cli_args = utils.get_CLI_args()
 
     try:
-        data, fs = sf.read(args.wavefile_name, dtype=np.float32)
+        data, fs = sf.read(cli_args.wavefile_name, dtype=np.float32)
 
         block_size = 256
         print(f"Framerate: {fs}")
@@ -21,10 +18,11 @@ if __name__ == "__main__":
         print(spk)
         with spk.player(samplerate=fs, blocksize=block_size) as sp:
             # print(sp.buffersize)
+            sp.latency
             while True:
                 sp.play(data)
 
     except KeyboardInterrupt:
-        parser.exit('\nInterrupted by user')
+        exit('\nInterrupted by user')
     except Exception as e:
-        parser.exit(type(e).__name__ + ': ' + str(e))
+        exit(type(e).__name__ + ': ' + str(e))

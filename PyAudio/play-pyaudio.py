@@ -1,20 +1,17 @@
-import argparse
-import sys
 import wave
 
 import pyaudio
+
+import utils
 
 CHUNK = 1024
 
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("play wavefile")
-    parser.add_argument('wavefile_name', default="examples/click.wav",
-                        type=str, nargs='?', help='use this file to play')
-    args = parser.parse_args()
+    cli_args = utils.get_CLI_args()
 
-    wf = wave.open(args.wavefile_name, 'rb')
+    wf = wave.open(cli_args.wavefile_name, 'rb')
 
     framerate = wf.getframerate()
     print(f"Framerate: {framerate}")
