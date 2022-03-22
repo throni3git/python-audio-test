@@ -8,7 +8,7 @@ setup(name='python-audio-test',
       license='',
       install_requires=[
           'autopep8',
-          'numpy==1.19.3',
+          'numpy',
           'PyAudio',
           'pylint',
           'scipy',
