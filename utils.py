@@ -18,6 +18,12 @@ def write_soundfile(filename: str, data: np.ndarray, fs: int = 48000) -> None:
     sf.write(fn_out_file.absolute(), data, fs, subtype="PCM_24")
 
 
+def load_soundfile(fn_in: str) -> np.ndarray:
+    fn_in = Path(fn_in)
+    data, fs = sf.read(fn_in, always_2d=True)
+    return data.T, fs
+
+
 def get_CLI_args() -> ICLIArgs:
     """ default CLI argument handling for all test cases """
 
