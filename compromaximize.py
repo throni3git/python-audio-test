@@ -67,10 +67,11 @@ def compromaximize(data: np.ndarray, fs: int,
     data = np.pad(data, ((0, 0), (additional_samples, additional_samples)))
     blocks = data[:, matrix]
 
-    window = scipy.signal.windows.hann(window_width)
+    window = scipy.signal.windows.hann(window_width).astype('float32')
     windowed = blocks * window[None, None, :]
 
-    max_values = np.max(np.abs(blocks), axis=(0, 2))
+    abs_blocks = np.abs(blocks)
+    max_values = np.max(abs_blocks, axis=(0, 2))
     max_values[max_values < 1/limit_gain] = 1/limit_gain
     gains = 1 / max_values
     maximized = windowed * gains[None, :, None]

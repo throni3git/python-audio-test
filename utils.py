@@ -20,7 +20,7 @@ def write_soundfile(filename: str, data: np.ndarray, fs: int = 48000) -> None:
 
 def load_soundfile(fn_in: str) -> np.ndarray:
     fn_in = Path(fn_in)
-    data, fs = sf.read(fn_in, always_2d=True)
+    data, fs = sf.read(fn_in, always_2d=True, dtype='float32')
     return data.T, fs
 
 
