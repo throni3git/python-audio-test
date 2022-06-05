@@ -65,6 +65,7 @@ def compromaximize(data: np.ndarray, fs: int,
     # print(matrix)
     additional_samples = (amount_samples-data.shape[-1]) // 2
     data = np.pad(data, ((0, 0), (additional_samples, additional_samples)))
+    matrix[matrix > data.shape[1]-1] = data.shape[1]-1
     blocks = data[:, matrix]
 
     window = scipy.signal.windows.hann(window_width).astype('float32')
@@ -75,15 +76,16 @@ def compromaximize(data: np.ndarray, fs: int,
     max_values[max_values < 1/limit_gain] = 1/limit_gain
     gains = 1 / max_values
     maximized = windowed * gains[None, :, None]
+    del windowed
 
     odd_blocks = maximized[:, ::2, :]
     even_blocks = maximized[:, 1::2, :]
+    del maximized
     recombined1 = np.reshape(odd_blocks, (data.shape[0], amount_samples))
     recombined2 = np.reshape(even_blocks, (data.shape[0], amount_samples-window_width))
     # plt.plot(recombined1.T)
     # plt.plot(recombined2.T)
     recombined = recombined1[:, hop_size:-hop_size] + recombined2
-    recombined = recombined / 1.0
 
     if odd_length == 1:
         recombined = recombined[:, :-1]
