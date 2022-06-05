@@ -104,17 +104,27 @@ if __name__ == '__main__':
 
     # compromaximize(np.random.randn(2, 20), 1, 4)
 
+    fns = [
+        "D:/Bands/Entleerung Schmidt/Entleerung_2022-02-27/220227_0168.wav",
+        "D:/Bands/Entleerung Schmidt/Entleerung_2022-02-27/220227_0169A.wav",
+        "D:/Bands/Entleerung Schmidt/Entleerung_2022-02-27/220227_0169.wav"
+    ]
+
     fn_in = cli_args.wavefile_name
-    fn_in = Path(fn_in)
     # fn_in = "examples/click.wav"
     # fn_in = "examples/sweep.wav"
-    print(f"processing file {fn_in}")
-    data, fs = utils.load_soundfile(fn_in)
+    fn_in = "D:/Bands/Entleerung Schmidt/Entleerung_2022-03-18/220320_0183.wav"
+    for fn_in in fns:
+        fn_in = Path(fn_in)
+        print(f"processing file {fn_in}")
+        data, fs = utils.load_soundfile(fn_in)
 
-    maximized = compromaximize(data, fs, 0.005, dbg=DBG)
+        data = data - np.mean(data, axis=1)[:, None]
 
-    fn_out = Path("tmp") / f"{fn_in.stem}_compromaximized.wav"
-    utils.write_soundfile(fn_out, maximized[0])
+        maximized = compromaximize(data, fs, 0.1, limit_gain=100, dbg=DBG)
+
+        fn_out = Path("tmp") / f"{fn_in.stem}_compromaximized.wav"
+        utils.write_soundfile(fn_out, maximized.T, fs)
 
     if DBG:
         plt.show()
