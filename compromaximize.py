@@ -1,6 +1,7 @@
 from pathlib import Path
 import time
 
+
 import numpy as np
 import scipy.signal
 
@@ -92,7 +93,6 @@ class Compromaximizer:
         # shorten and return
         result = result[:, :original_length]
         return result / overlap
-
 
 def main_example():
     """example for using Compromaximizer
